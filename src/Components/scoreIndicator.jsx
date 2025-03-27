@@ -1,8 +1,6 @@
 import React from "react";
 import ReactScoreIndicator from "react-score-indicator";
 
-import "./styles.css";
-
 const scoreIndicator = ({value, maxValue}) => {
     return (
       <div className="indicator w-auto mt-9">
