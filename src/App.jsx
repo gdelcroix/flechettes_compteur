@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Container } from 'react-bootstrap';
 import ScoreIndicator from './Components/scoreIndicator';
 import dart from './Assets/dart.png';
@@ -10,13 +10,16 @@ function App() {
   const [darts, setDarts] = useState(3);
   const [laps, setLaps] = useState(0);
   const [oldScore, setOldScore] = useState(0);
+  const [replay, setReplay] = useState(false);
 
   const handleClick = (number) => {
+    let result = score - number * multiplicator;
+
     if (darts - 1 === 0) {
-      alert('Tour terminé !!');
+      alert(`Tour terminé !!`);
       setDarts(3);
       setLaps(laps + 1);
-      if (score - number * multiplicator >= 0) {
+      if (result >= 0) {
         setOldScore(score);
       }
     } else {
@@ -25,30 +28,37 @@ function App() {
     if (number === 25 && multiplicator === 3) {
       alert('TRICHEUR !!!!!');
       setMultiplicator(1);
-    } else if (score - number * multiplicator < 0) {
-      alert('Tour terminé !!');
+    } else if (result < 0) {
+      alert('Tour perdu !!');
       setScore(oldScore);
       setDarts(3);
       setLaps(laps + 1);
       setMultiplicator(1);
-    } else if (score - number * multiplicator === 0) {
-      setScore(score - number * multiplicator);
+    } else if (result === 0) {
+      setScore(result);
       setMultiplicator(1);
-      alert('Victoire !!!!');
+      alert(`Victoire !!!!`);
     } else {
-      setScore(score - number * multiplicator);
+      setScore(result);
       setMultiplicator(1);
     }
-    console.debug('oldscore :' + oldScore, 'score :' + score);
   };
 
-  const replay = () => {
-    setScore(scoreToReach);
-    setScoreToReach(501);
-    setMultiplicator(1);
-    setDarts(3);
-    setLaps(0);
+  const handleReplay = () => {
+    setReplay(true);
   };
+
+  useEffect(() => {
+    if (replay) {
+      setScore(501);
+      setScoreToReach(501);
+      setOldScore(0);
+      setMultiplicator(1);
+      setDarts(3);
+      setLaps(0);
+      setReplay(false);
+    }
+  }, [replay]);
 
   return (
     <>
@@ -82,7 +92,7 @@ function App() {
           <>
             {' '}
             {}
-            <Button variant='primary' className='mt-3' onClick={replay}>
+            <Button variant='primary' className='mt-3' onClick={handleReplay}>
               Rejouer
             </Button>
           </>
